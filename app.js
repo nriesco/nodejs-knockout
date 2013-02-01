@@ -31,6 +31,8 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/intermediate', routes.intermediate);
+
 app.post('/save', meetup.save);
 app.get('/load', meetup.load);
 app.get('/deleteAll', meetup.deleteAll);

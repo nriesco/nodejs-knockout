@@ -1,166 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Testing with nodejs and knockout</title>
-
-<script type='text/javascript' src='/javascripts/jquery-1.9.0.min.js'></script>
-<script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
-
+<title>Index</title>
 <link rel="stylesheet" href="/stylesheets/knockout.css" />
-
-
-<script type='text/javascript'>
-/*<![CDATA[*/
-
-$(document).ready(function () {
-
-
-	/* MODELS */
-	// email model
-	var Email = function(input) {
-		var self = this;
-		if (typeof(input) === 'undefined') { input = { name: 'some@some.com' }; }	
-		self.name 				= ko.observable(input.name);
-	}
-	// person model
-	var Person = function(input) {
-		var self = this;
-		if (typeof(input) === 'undefined') {
-			input = { name: 'Rambo', twitter: '@none' }; 
-		}	
-		self.name 				= ko.observable(input.name);
-		self.twitter 			= ko.observable(input.twitter);
-		self.emails 			= ko.observableArray([]);
-		for (var i in input.emails) { self.emails.push( new Email(input.emails[i]) ) }
-		self.addEmail 			= function() { self.emails.push( new Email() ) }
-		self.removeEmail 		= function(item) { self.emails.remove(item) }
-	}
-	// meetup model
-	var Meetup = function(input) {
-		var self = this;
-		if (typeof(input) === 'undefined') {
-			input = { name: 'Dynlang', date: Date.now }; 
-		}
-		self.name 				= ko.observable(input.name);
-		self.date 				= ko.observable(input.date);
-		self.people 			= ko.observableArray([]);
-		for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
-		self.addPerson 			= function() { self.people.push( new Person() ) }
-		self.removePerson 		= function(item) { self.people.remove(item) }
-	}
-
-
-	var ViewModel = function() {
-		var self = this;
-		// meetups
-		self.meetups = ko.observableArray([]);
-		// holds the new meetup
-		self.newMeetup = ko.observableArray( [new Meetup()] );
-
-		/**
-		* load entries from db
-		*
-		* it maps the received data into our objects
-		* then assign the result to the model
-		*/
-		self.load = function() {
-			$.getJSON("/load", function(data) {
-				var mappedMeetups = $.map(data, function(meetup) { return new Meetup(meetup) });
-				self.meetups( mappedMeetups );
-			}); 
-		}
-
-		/* delete all entries from db, then update the interface */
-		self.deleteAll = function() {
-			$.getJSON("/deleteAll", function(data) {
-				self.load();
-			}); 
-		}
-
-		/* save to db, remember to use ko.toJSON */
-		self.save = function() {
-			$.ajax({
-				type: "POST",
-				url: '/save',
-				data: ko.toJSON( self.newMeetup() ),
-				success: saveHandler,
-				error: errorHandler,
-				dataType: 'json',
-				contentType: 'application/json' // don't forget this!!!!
-			});	
-		}
-
-		/* handle */
-		function saveHandler(msg) { 
-			if (msg.result) {
-				self.load();
-			} else {
-				console.log('error al procesar los datos: ' + msg.message);
-			}
-		}
-
-		/* handle */
-		function errorHandler(msg) {
-			console.log('error: ' + msg);
-		}
-
-	}
-
-	// esto no se bien si esta ok o se hace de otra forma
-	var modelo = new ViewModel();
-	ko.applyBindings(modelo); // This makes Knockout get to work
-	modelo.load();
-	setInterval(modelo.load, 1000 * 30);
-
-
-});
-/*]]>*/
-</script>
-
 </head>
 <body>
 
-<form data-bind="submit: save">
-	<div data-bind="foreach: newMeetup">
+Examples
 
-		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 3" value="+person">
-		<div data-bind="foreach: people">
-			<div>
-				<input type="text" data-bind="value: name">
-				<input type="text" data-bind="value: twitter">
-				<input type="button" data-bind="click: $parent.removePerson" value="x">
-				<input type="button" data-bind="click: addEmail, enable: emails().length < 5" value="+email">
-				<div data-bind="foreach: emails">
-					<input type="text" data-bind="value: name">
-					<input type="button" data-bind="click: $parent.removeEmail" value="x">
-				</div>	
-			</div>
-		</div>
-
-	</div>
-	<input type="submit" data-bind="click: save" value="Save">
-</form>
-
-
-<input type="button" data-bind="click: deleteAll" value="DELETE ALL ENTRIES">
-
-
-<div data-bind="foreach: meetups">
-	<div class="meetupContainer">
-		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: date"></span>)
-		<br>
-		<span data-bind="visible: people().length > 0">Participants:</html>
-		<div data-bind="foreach: people">
-			<div> - 
-				<span data-bind="text: name"></span> <a data-bind="attr: { href: 'https://twitter.com/' + twitter(), title: 'twitter account' }"><span data-bind="text: twitter"></span></a>
-				<span data-bind="foreach: emails">
-					&nbsp;<a data-bind="attr: { href: 'mailto:' + name(), title: 'email' }"><span data-bind="text: name"></span></a>
-				</span>	
-			</div>
-		</div>
-	</div>
+<div class="meetupContainer">
+	<ul>
+		<li><a href="/basic">Basic. Just read</a>
+		<li><a href="/intermediate">Intermediate. Read, create new</a>
+		<li><a href="/advanced">Advanced. Read, create new and edit existing</a>
+	</ul>
 </div>
-
 
 </body>
 </html>
