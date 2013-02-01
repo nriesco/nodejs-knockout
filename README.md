@@ -1,5 +1,3 @@
-nodejs-knockout
-===============
 
 Combining Knockout and Node, using Expressjs and MongoDB
 --------
