@@ -8,14 +8,15 @@ var meetupSchema = require('../models/meetup')
 
 
 /**
-* guarda una campania
+* save
 */
 exports.save = function (req, res) {
 	
-	var datos = req.body
-	var dato = datos[0]
+	// var datos = req.body
+	// var dato = datos[0]
 
-	var meetup = new Meetup(dato)
+	var data = req.body[0]
+	var meetup = new Meetup(data)
 	meetup.save(function (err) {
 		if (err) {
 			console.log(err.errors)
@@ -31,13 +32,12 @@ exports.save = function (req, res) {
 */
 exports.update = function (req, res) {
 	
-	var datos = req.body
-	var dato = datos[0]
-	var meetup = new Meetup(dato)
-	var id = dato._id
-	delete dato._id
+	var data = req.body[0]
+	var meetup = new Meetup(data)
+	var id = data._id
+	delete data._id
 	// var up = { $set: dato }
-	Meetup.update({_id: id}, dato, function(err, affected) {
+	Meetup.update({_id: id}, data, function(err, affected) {
 		if (err) {
 			// console.log(err)
 			res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )

@@ -1,0 +1,32 @@
+
+
+.rounded(@pixels: 3px) {
+	-webkit-border-radius: @pixels @pixels @pixels @pixels;
+	-moz-border-radius: @pixels @pixels @pixels @pixels;
+	border-radius: @pixels @pixels @pixels @pixels;
+}
+
+
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+@linkColor: #ffffff;
+
+a:link {
+	color: @linkColor;
+	text-decoration: none;
+}      /* unvisited link */
+a:visited { color: @linkColor;}  /* visited link */
+a:hover {color: orange;}  /* mouse over link */
+a:active {color:blue;}  /* selected link */
+
+
+.meetupContainer {
+	.rounded(9px);
+	background: green;
+	color: white;
+	padding: 10px;
+	margin: 10px;
+}

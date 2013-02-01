@@ -29,7 +29,7 @@ var Meetup = module.exports = meetupSchema
 
 // person
 personSchema.path('lastName').validate(function (value) {
-	if (value == 'doe') {
+	if (value.toUpperCase() == 'DOE') {
 		return false
 	} else {
 		return true
@@ -39,7 +39,7 @@ personSchema.path('lastName').validate(function (value) {
 
 // email
 emailSchema.path('name').validate(function (value) {
-	if (value == 'no@email.com') {
+	if (value.toUpperCase() == 'NO@EMAIL.COM') {
 		return false
 	} else {
 		return true

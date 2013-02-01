@@ -1,0 +1,30 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+a:link {
+  color: #ffffff;
+  text-decoration: none;
+}
+/* unvisited link */
+a:visited {
+  color: #ffffff;
+}
+/* visited link */
+a:hover {
+  color: orange;
+}
+/* mouse over link */
+a:active {
+  color: blue;
+}
+/* selected link */
+.meetupContainer {
+  -webkit-border-radius: 9px 9px 9px 9px;
+  -moz-border-radius: 9px 9px 9px 9px;
+  border-radius: 9px 9px 9px 9px;
+  background: green;
+  color: white;
+  padding: 10px;
+  margin: 10px;
+}

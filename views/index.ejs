@@ -6,7 +6,7 @@
 <script type='text/javascript' src='/javascripts/jquery-1.9.0.min.js'></script>
 <script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
 
-<link rel="stylesheet" href="/stylesheets/style.css" />
+<link rel="stylesheet" href="/stylesheets/knockout.css" />
 
 
 <script type='text/javascript'>
@@ -39,9 +39,10 @@ $(document).ready(function () {
 	var Meetup = function(input) {
 		var self = this;
 		if (typeof(input) === 'undefined') {
-			input = { name: 'Dynlang' }; 
+			input = { name: 'Dynlang', date: Date.now }; 
 		}
 		self.name 				= ko.observable(input.name);
+		self.date 				= ko.observable(input.date);
 		self.people 			= ko.observableArray([]);
 		for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
 		self.addPerson 			= function() { self.people.push( new Person() ) }
@@ -137,7 +138,7 @@ $(document).ready(function () {
 		</div>
 
 	</div>
-	<input type="submit" data-bind="click: save" value="Guardar">
+	<input type="submit" data-bind="click: save" value="Save">
 </form>
 
 
@@ -145,16 +146,18 @@ $(document).ready(function () {
 
 
 <div data-bind="foreach: meetups">
-	<div>
-		<span data-bind="text: name"></span>
+	<div class="meetupContainer">
+		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: date"></span>)
 		<br>
-		<span data-bind="foreach: people">
-			<span data-bind="text: name"></span>
-			<span data-bind="foreach: emails">
-				<span data-bind="text: name"></span>
-			</span>	
-			</span>
-		</span>
+		<span data-bind="visible: people().length > 0">Participants:</html>
+		<div data-bind="foreach: people">
+			<div> - 
+				<span data-bind="text: name"></span> <a data-bind="attr: { href: 'https://twitter.com/' + twitter(), title: 'twitter account' }"><span data-bind="text: twitter"></span></a>
+				<span data-bind="foreach: emails">
+					&nbsp;<a data-bind="attr: { href: 'mailto:' + name(), title: 'email' }"><span data-bind="text: name"></span></a>
+				</span>	
+			</div>
+		</div>
 	</div>
 </div>
 
