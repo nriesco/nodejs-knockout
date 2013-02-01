@@ -19,7 +19,7 @@ $(document).ready(function () {
 	// email model
 	var Email = function(input) {
 		var self = this;
-		if (typeof(input) === 'undefined') { input = { name: 'noNNNN@email.com' }; }	
+		if (typeof(input) === 'undefined') { input = { name: 'some@some.com' }; }	
 		self.name 				= ko.observable(input.name);
 	}
 	// person model
@@ -122,13 +122,13 @@ $(document).ready(function () {
 <form data-bind="submit: save">
 	<div data-bind="foreach: newMeetup">
 
-		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson" value="+person">
+		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 3" value="+person">
 		<div data-bind="foreach: people">
 			<div>
 				<input type="text" data-bind="value: name">
 				<input type="text" data-bind="value: twitter">
 				<input type="button" data-bind="click: $parent.removePerson" value="x">
-				<input type="button" data-bind="click: addEmail" value="+email">
+				<input type="button" data-bind="click: addEmail, enable: emails().length < 5" value="+email">
 				<div data-bind="foreach: emails">
 					<input type="text" data-bind="value: name">
 					<input type="button" data-bind="click: $parent.removeEmail" value="x">
