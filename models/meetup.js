@@ -1,18 +1,19 @@
 var Schema = require('mongoose').Schema
 
 
-// email
-var emailSchema = new Schema({
+// interest
+var interestSchema = new Schema({
 	name				: { type: String }
 })
-var Email = module.exports = emailSchema
+var Interest = module.exports = interestSchema
 
 // person
 var personSchema = new Schema({
 	name 				: { type: String, required: true }
 	, lastName 			: { type: String }
-	, emails 			: [Email]
+	, interests 		: [Interest]
 	, twitter 			: { type: String }
+	, email 			: { type: String }
 })
 var Person = module.exports = personSchema
 
@@ -38,10 +39,10 @@ personSchema.path('lastName').validate(function (value) {
 
 
 // email
-emailSchema.path('name').validate(function (value) {
-	if (value.toUpperCase() == 'NO@EMAIL.COM') {
-		return false
-	} else {
-		return true
-	}
-}, 'Is that your real email? I don\'t think so')
+// emailSchema.path('name').validate(function (value) {
+// 	if (value.toUpperCase() == 'NO@EMAIL.COM') {
+// 		return false
+// 	} else {
+// 		return true
+// 	}
+// }, 'Is that your real email? I don\'t think so')

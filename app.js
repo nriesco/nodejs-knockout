@@ -4,15 +4,15 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  , meetup = require('./routes/meetup')
+  , examples = require('./controllers/examples')
+  , meetup = require('./controllers/meetup')
   , http = require('http')
   , path = require('path');
 
 var app = express();
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 8080);
+  app.set('port', process.env.PORT || 3030);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.favicon());
@@ -30,8 +30,8 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-app.get('/', routes.index);
-app.get('/intermediate', routes.intermediate);
+app.get('/', examples.index);
+app.get('/intermediate', examples.intermediate);
 
 app.post('/save', meetup.save);
 app.get('/load', meetup.load);
