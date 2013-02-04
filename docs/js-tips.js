@@ -5,40 +5,44 @@
 
 // this array
 $PHPArray = array();
-$PHPArray[ ] = 'red';
-$PHPArray[ ] = 'green';
-$PHPArray[ ] = 'blue';
+$PHPArray[ ] = 'Santiago';
+$PHPArray[ ] = 'Pucón';
+$PHPArray[ ] = 'Punta Arenas';
 
 // equals to
 var jsArray = [];
-jsArray.push('red');
-jsArray.push('green');
-jsArray.push('blue');
+jsArray.push('Santiago');
+jsArray.push('Pucón');
+jsArray.push('Punta Arenas');
 
 
 // Sparse arrays (que tienen blancos entremedio)
 $PHPArray = array();
-$PHPArray[2] = 'red';
-$PHPArray[5] = 'green';
-$PHPArray[7] = 'blue';
+$PHPArray[100] = 'Santiago';
+$PHPArray[200] = 'Pucón';
+$PHPArray[300] = 'Punta Arenas';
 
 
 var jsArray = [];
-jsArray[2] = 'red';
-jsArray[5] = 'green'; 
-jsArray[7] = 'blue';
-// WARNING: a.length equals 8!
+jsArray[100] = 'Santiago';
+jsArray[200] = 'Pucón'; 
+jsArray[300] = 'Punta Arenas';
+// WARNING: a.length equals 301!
 
 // underlying code:
 var jsArray = [];
 jsArray[0] = undefined;
-jsArray[1] = undefined;
-jsArray[2] = 'red';
-jsArray[3] = undefined;
-jsArray[4] = undefined;
-jsArray[5] = 'green';
-jsArray[6] = undefined;
-jsArray[7] = 'blue';
+...
+jsArray[99] = undefined;
+jsArray[100] = 'Santiago';
+jsArray[101] = undefined;
+...
+jsArray[199] = undefined;
+jsArray[200] = 'Pucón';
+jsArray[201] = undefined;
+...
+jsArray[299] = undefined;
+jsArray[300] = 'Punta Arenas';
 
 // implement count() for arrays
 function count(array) {
@@ -54,21 +58,21 @@ function count(array) {
 
 // associative arrays (objects in JS)
 $PHPArray = array(); 
-$PHPArray['red'] = 0; 
-$PHPArray['green'] = 128; 
-$PHPArray['blue'] = 255;
+$PHPArray['Santiago'] = 13; 
+$PHPArray['Pucón'] = 9; 
+$PHPArray['Punta Arenas'] = 12;
 
 // instead of using [] use {} for object notation
 var jsArray = {};
-jsArray['red'] = 0; 
-jsArray['green'] = 128; 
-jsArray['blue'] = 255;
+jsArray['Santiago'] = 13; 
+jsArray['Pucón'] = 9; 
+jsArray['Punta Arenas'] = 12;
 
 // this will result in the following object
 {
-	"red" : 0,
-	"green" : 128,
-	"blue" : 255
+	"Santiago" : 13,
+	"Pucón" : 9,
+	"Punta Arenas" : 12
 }
 
 // implement count() for objects
