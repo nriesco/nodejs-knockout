@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Testing with nodejs and knockout</title>
+
+<script type='text/javascript' src='/javascripts/jquery-1.9.0.min.js'></script>
+<script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
+
+<link rel="stylesheet" href="/stylesheets/knockout.css" />
+
+
+<script type='text/javascript'>
+/*<![CDATA[*/
+
+$(document).ready(function () {
+
+
+	/* MODELS */
+	// interest model
+	var Interest = function(input) {
+		var self = this;	
+		self.name 				= ko.observable(input.name);
+	}
+	// person model
+	var Person = function(input) {
+		var self = this;
+		self.name 				= ko.observable(input.name);
+		self.twitter 			= ko.observable(input.twitter);
+		self.email 				= ko.observable(input.email);
+		self.interests 			= ko.observableArray([]);
+		for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
+		self.addInterest 		= function() { self.interests.push( new Interest() ) }
+		self.removeInterest 	= function(item) { self.interests.remove(item) }
+	}
+	// meetup model
+	var Meetup = function(input) {
+		var self = this;
+		if (typeof(input) === 'undefined') {
+			input = { name: 'Dynlang', date: Date.now }; 
+		}
+		self.name 				= ko.observable(input.name);
+		self.date 				= ko.observable(input.date);
+		self.people 			= ko.observableArray([]);
+		for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
+		self.addPerson 			= function() { self.people.push( new Person() ) }
+		self.removePerson 		= function(item) { self.people.remove(item) }
+
+		self.formattedDate 		= ko.computed(function() {
+			var date =  new Date(self.date());
+			return date.toDateString('yyyy-MM-dd');
+		}, self)
+	}
+
+	var ViewModel = function() {
+		var self = this;
+		// meetups
+		self.meetups = ko.observableArray([]);
+
+		/**
+		* load entries from db
+		*
+		* it maps the received data into our objects
+		* and then assigns the result to the model
+		*/
+		self.load = function() {
+			$.getJSON('/load', function(data) {
+				var mappedMeetups = $.map(data, function(meetup) { return new Meetup(meetup) });
+				self.meetups( mappedMeetups );
+			}); 
+		}
+
+	}
+
+	// esto no se bien si esta ok o se hace de otra forma
+	var modelo = new ViewModel();
+	ko.applyBindings(modelo); // This makes Knockout get to work
+	modelo.load();
+	setInterval(modelo.load, 1000 * 5);
+
+	// ko.applyBindings(new ViewModel());
+
+
+});
+/*]]>*/
+</script>
+
+</head>
+<body>
+
+<div data-bind="foreach: meetups">
+	<div class="meetupContainer">
+		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: formattedDate"></span>)
+		<br>
+		<span data-bind="if: people().length > 0">Participants:</span>
+		<ol data-bind="foreach: people">
+			<li>
+				<span data-bind="text: name"></span>
+				<a data-bind="attr: { href: 'mailto:' + email(), title: 'email' }">(<span data-bind="text: email"></span>)</a>
+				<a data-bind="attr: { href: 'https://twitter.com/' + twitter(), title: 'twitter account' }"><span data-bind="text: twitter"></span></a>
+				<div>
+					
+				<span data-bind="visible: interests().length > 0">Interests:</span>
+					<span data-bind="foreach: interests">
+						&nbsp;<a data-bind="attr: { href: 'https://www.google.com/?q=' + name() + '#hl=en&tbo=d&output=search&sclient=psy-ab&q=' + name() + '&fp=1:', title: 'link' }"><span data-bind="text: name"></span></a>
+					</span>	
+				</div>
+			</li>
+		</ol>
+		<span data-bind="if: people().length == 0">No one was there? Really?</span>
+	</div>
+</div>
+
+</body>
+</html>
