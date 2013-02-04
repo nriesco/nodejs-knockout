@@ -16,24 +16,25 @@ $(document).ready(function () {
 
 
 	/* MODELS */
-	// email model
-	var Email = function(input) {
+	// interest model
+	var Interest = function(input) {
 		var self = this;
-		if (typeof(input) === 'undefined') { input = { name: 'some@some.com' }; }	
+		if (typeof(input) === 'undefined') { input = { name: 'javascript' }; }	
 		self.name 				= ko.observable(input.name);
 	}
 	// person model
 	var Person = function(input) {
 		var self = this;
 		if (typeof(input) === 'undefined') {
-			input = { name: 'Rambo', twitter: '@none' }; 
+			input = { name: 'Rambo', twitter: '@none', email: 'un@email.com' }; 
 		}	
 		self.name 				= ko.observable(input.name);
 		self.twitter 			= ko.observable(input.twitter);
-		self.emails 			= ko.observableArray([]);
-		for (var i in input.emails) { self.emails.push( new Email(input.emails[i]) ) }
-		self.addEmail 			= function() { self.emails.push( new Email() ) }
-		self.removeEmail 		= function(item) { self.emails.remove(item) }
+		self.email 				= ko.observable(input.email);
+		self.interests 			= ko.observableArray([]);
+		for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
+		self.addInterest 		= function() { self.interests.push( new Interest() ) }
+		self.removeInterest 	= function(item) { self.interests.remove(item) }
 	}
 	// meetup model
 	var Meetup = function(input) {
@@ -50,7 +51,15 @@ $(document).ready(function () {
 
 		self.formattedDate 		= ko.computed(function() {
 			// return self.date().toString('dd-MM-yyyy');
-			return self.date();
+
+			var date =  new Date(self.date());
+			// var date = self.date();
+			// date.format("dddd, mmmm dS, yyyy, h:MM:ss TT");
+			// date.toString('yyyy-MM-dd');
+			// date.toDateString(); // "Thu Dec 29 2011"
+			// return date;
+			return date.toDateString('yyyy-MM-dd');
+			// return date.toISOString();
 		}, self)
 	}
 
@@ -128,46 +137,58 @@ $(document).ready(function () {
 <body>
 
 <form data-bind="submit: save">
-	<div data-bind="foreach: newMeetup">
-
-		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 3" value="+person">
+	<div data-bind="foreach: newMeetup" class="newMeetup">
+		Meetup whitelist<br>
+		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person">
 		<div data-bind="foreach: people">
 			<div>
 				<input type="text" data-bind="value: name">
 				<input type="text" data-bind="value: twitter">
+				<input type="text" data-bind="value: email">
 				<input type="button" data-bind="click: $parent.removePerson" value="x">
-				<input type="button" data-bind="click: addEmail, enable: emails().length < 5" value="+email">
-				<div data-bind="foreach: emails">
+				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest">
+				<div data-bind="foreach: interests">
 					<input type="text" data-bind="value: name">
-					<input type="button" data-bind="click: $parent.removeEmail" value="x">
+					<input type="button" data-bind="click: $parent.removeInterest" value="x">
 				</div>	
 			</div>
 		</div>
-
+		<br>
+		<input type="submit" data-bind="click: $parent.save" value="Save">
 	</div>
-	<input type="submit" data-bind="click: save" value="Save">
+	
 </form>
 
 
-<input type="button" data-bind="click: deleteAll" value="DELETE ALL ENTRIES">
+<br>
 
 
 <div data-bind="foreach: meetups">
 	<div class="meetupContainer">
 		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: formattedDate"></span>)
 		<br>
-		<span data-bind="visible: people().length > 0">Participants:</html>
-		<div data-bind="foreach: people">
-			<div> - 
-				<span data-bind="text: name"></span> <a data-bind="attr: { href: 'https://twitter.com/' + twitter(), title: 'twitter account' }"><span data-bind="text: twitter"></span></a>
-				<span data-bind="foreach: emails">
-					&nbsp;<a data-bind="attr: { href: 'mailto:' + name(), title: 'email' }"><span data-bind="text: name"></span></a>
-				</span>	
-			</div>
-		</div>
+		<span data-bind="if: people().length > 0">Participants:</span>
+		<ol data-bind="foreach: people">
+			<li>
+				<span data-bind="text: name"></span>
+				<a data-bind="attr: { href: 'mailto:' + email(), title: 'email' }">(<span data-bind="text: email"></span>)</a>
+				<a data-bind="attr: { href: 'https://twitter.com/' + twitter(), title: 'twitter account' }"><span data-bind="text: twitter"></span></a>
+				<div>
+					
+				<span data-bind="visible: interests().length > 0">Interests:</span>
+					<span data-bind="foreach: interests">
+						&nbsp;<a data-bind="attr: { href: 'https://www.google.com/?q=' + name() + '#hl=en&tbo=d&output=search&sclient=psy-ab&q=' + name() + '&fp=1:', title: 'link' }"><span data-bind="text: name"></span></a>
+					</span>	
+				</div>
+			</li>
+		</ol>
+		<span data-bind="if: people().length == 0">No one was there? Really?</span>
 	</div>
 </div>
 
+<div class="deleteAll">
+	<input type="button" data-bind="click: deleteAll" value="DELETE ALL ENTRIES">
+</div>
 
 </body>
 </html>
