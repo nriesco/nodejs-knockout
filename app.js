@@ -34,6 +34,7 @@ app.get('/', examples.index);
 app.get('/basic', examples.basic);
 app.get('/intermediate', examples.intermediate);
 app.get('/advanced', examples.advanced);
+app.get('/full', examples.full);
 
 app.post('/save', meetup.save);
 app.get('/load', meetup.load);

@@ -20,6 +20,6 @@ exports.advanced = function(req, res){
   res.render('read-new-edit');
 };
 
-exports.validation = function(req, res){
+exports.full = function(req, res){
   res.render('full');
 };

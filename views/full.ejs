@@ -18,17 +18,25 @@
 $(document).ready(function () {
 
 	/* VARIABLES/CONSTANTS */
+	var defaultEmail 				= 'get@one.com';
+	var defaultTwitter 				= '@riesco';
+	var defaultName 				= 'Rambo';
+	var defaultMeetupName 			= 'Dynlang';
 	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production
 
 	/* MODELS */
 	// interest model
 	var Interest = function(input) {
-		var self = this;	
+		var self = this;
+		if (typeof(input) === 'undefined') { input = { name: 'javascript' }; }	
 		self.name 				= ko.observable(input.name);
 	}
 	// person model
 	var Person = function(input) {
 		var self = this;
+		if (typeof(input) === 'undefined') {
+			input = { name: defaultName, twitter: defaultTwitter, email: defaultEmail }; 
+		}	
 		self.name 				= ko.observable(input.name);
 		self.twitter 			= ko.observable(input.twitter);
 		self.email 				= ko.observable(input.email);
@@ -40,6 +48,9 @@ $(document).ready(function () {
 	// meetup model
 	var Meetup = function(input) {
 		var self = this;
+		if (typeof(input) === 'undefined') {
+			input = { name: defaultMeetupName, date: Date.now }; 
+		}
 		self.name 				= ko.observable(input.name);
 		self.date 				= ko.observable(input.date);
 		self.people 			= ko.observableArray([]);
@@ -49,14 +60,18 @@ $(document).ready(function () {
 
 		self.formattedDate 		= ko.computed(function() {
 			var date =  new Date(self.date());
+			// return date.toDateString('yyyy-MM-dd'); // @todo: fix this
 			return date.toDateString();
 		}, self)
 	}
+
 
 	var ViewModel = function() {
 		var self = this;
 		// meetups
 		self.meetups = ko.observableArray([]);
+		// holds the new meetup
+		self.newMeetup = ko.observableArray( [new Meetup()] );
 
 		/**
 		* load entries from db
@@ -69,6 +84,40 @@ $(document).ready(function () {
 				var mappedMeetups = $.map(data, function(meetup) { return new Meetup(meetup) });
 				self.meetups( mappedMeetups );
 			}); 
+		}
+
+		/* delete all entries from db, then update the interface */
+		self.deleteAll = function() {
+			$.getJSON("/deleteAll", function(data) {
+				self.load();
+			}); 
+		}
+
+		/* save to db, remember to use ko.toJSON */
+		self.save = function() {
+			$.ajax({
+				type: 'POST',
+				url: '/save',
+				data: ko.toJSON( self.newMeetup() ),
+				success: saveHandler,
+				error: errorHandler,
+				dataType: 'json',
+				contentType: 'application/json' // don't forget this!!!!
+			});	
+		}
+
+		/* handle */
+		function saveHandler(msg) { 
+			if (msg.result) {
+				self.load();
+			} else {
+				console.log('ERROR: ' + msg.message);
+			}
+		}
+
+		/* handle */
+		function errorHandler(msg) {
+			console.log('ERROR: ' + msg);
 		}
 
 	}
@@ -86,6 +135,32 @@ $(document).ready(function () {
 </script>
 </head>
 <body>
+
+
+<form data-bind="submit: save">
+	<div data-bind="foreach: newMeetup" class="newMeetup">
+		Meetup whitelist<br>
+		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person">
+		<div data-bind="foreach: people">
+			<div>
+				<input type="text" data-bind="value: name">
+				<input type="text" data-bind="value: twitter">
+				<input type="text" data-bind="value: email">
+				<input type="button" data-bind="click: $parent.removePerson" value="x">
+				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest">
+				<div data-bind="foreach: interests">
+					<input type="text" data-bind="value: name">
+					<input type="button" data-bind="click: $parent.removeInterest" value="x">
+				</div>	
+			</div>
+		</div>
+		<br>
+		<input type="submit" data-bind="click: $parent.save" value="Save">
+	</div>
+	
+</form>
+
+<br>
 
 <div data-bind="foreach: meetups">
 	<div class="meetupContainer">
@@ -109,6 +184,11 @@ $(document).ready(function () {
 		<span data-bind="if: people().length == 0">There was no one there? Really?</span>
 	</div>
 </div>
+
+<div class="deleteAll">
+	<input type="button" data-bind="click: deleteAll" value="DELETE ALL ENTRIES">
+</div>
+
 
 </body>
 </html>

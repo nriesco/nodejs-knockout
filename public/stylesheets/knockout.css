@@ -21,27 +21,27 @@ a:active {
 }
 /* selected link */
 .meetupContainer {
-  -webkit-border-radius: 9px 9px 9px 9px;
-  -moz-border-radius: 9px 9px 9px 9px;
-  border-radius: 9px 9px 9px 9px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
   background: green;
   color: white;
   padding: 10px;
   margin: 10px;
 }
 .newMeetup {
-  -webkit-border-radius: 9px 9px 9px 9px;
-  -moz-border-radius: 9px 9px 9px 9px;
-  border-radius: 9px 9px 9px 9px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
   background: orange;
   color: white;
   padding: 10px;
   margin: 10px;
 }
 .deleteAll {
-  -webkit-border-radius: 9px 9px 9px 9px;
-  -moz-border-radius: 9px 9px 9px 9px;
-  border-radius: 9px 9px 9px 9px;
+  -webkit-border-radius: 6px 6px 6px 6px;
+  -moz-border-radius: 6px 6px 6px 6px;
+  border-radius: 6px 6px 6px 6px;
   background: red;
   color: white;
   padding: 10px;
