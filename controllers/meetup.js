@@ -10,7 +10,7 @@ var meetupSchema = require('../models/meetup')
 /**
 * save
 */
-exports.save = function (req, res) {
+exports.save = function (req, res, next) {
 	
 	// var datos = req.body
 	// var dato = datos[0]
@@ -20,7 +20,13 @@ exports.save = function (req, res) {
 	meetup.save(function (err) {
 		if (err) {
 			console.log(err.errors)
-			res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+			// res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+			try {
+				res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+			} catch (e) {
+				res.end( JSON.stringify( { result: false, message: 'error al guardar los datos' } ) )
+			}
+			
 		} else {
 			res.end( JSON.stringify( { result: true, message: 'datos guardados (solo primera entrada por ahora)' } ) )
 		}
@@ -30,7 +36,7 @@ exports.save = function (req, res) {
 /**
 * update
 */
-exports.update = function (req, res) {
+exports.update = function (req, res, next) {
 	
 	var data = req.body[0]
 	var meetup = new Meetup(data)
@@ -52,7 +58,7 @@ exports.update = function (req, res) {
 /**
 * obtiene todas las campanias y las retorna como json
 */
-exports.load = function (req, res) {
+exports.load = function (req, res, next) {
 	Meetup.find( { $query: {}, $orderby: { _id : 1 } }, function (err, docs) {
 		var arregloConCampanias = []
 		docs.forEach(function (meetup) {
@@ -64,7 +70,7 @@ exports.load = function (req, res) {
 }
 
 
-exports.deleteAll = function (req, res) {
+exports.deleteAll = function (req, res, next) {
 	Meetup.find( { $query: {}, $orderby: { _id : 1 } }, function (err, docs) {
 		docs.forEach(function (meetup) {
 			meetup.remove()

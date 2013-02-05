@@ -5,8 +5,10 @@
 
 <script type='text/javascript' src='/javascripts/jquery-1.9.0.min.js'></script>
 <script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
+<script type='text/javascript' src="/javascripts/knockout.validation.min.js"></script>
 
 <link rel="stylesheet" href="/stylesheets/knockout.css" />
+
 
 <script type='text/javascript'>
 /*<![CDATA[*/
@@ -20,6 +22,7 @@ $(document).ready(function () {
 	/* VARIABLES/CONSTANTS */
 	var defaultEmail 				= 'get@one.com';
 	var defaultTwitter 				= '@riesco';
+	defaultTwitter = '';
 	var defaultName 				= 'Rambo';
 	var defaultMeetupName 			= 'Dynlang';
 	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production
@@ -37,8 +40,15 @@ $(document).ready(function () {
 		if (typeof(input) === 'undefined') {
 			input = { name: defaultName, twitter: defaultTwitter, email: defaultEmail }; 
 		}	
-		self.name 				= ko.observable(input.name);
-		self.twitter 			= ko.observable(input.twitter);
+		self.name 				= ko.observable(input.name).extend({ myRule: { params: 'Rocky', message: "The name MUST be Rocky !" } });
+		self.twitter 			= ko.observable(input.twitter).extend({ 
+			required: true
+			, minLength: 5
+			, pattern : {
+				message: "Twitter accounts must start with an @"
+				, params: /^@{1}.+/
+			}
+		});
 		self.email 				= ko.observable(input.email);
 		self.interests 			= ko.observableArray([]);
 		for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
@@ -51,7 +61,10 @@ $(document).ready(function () {
 		if (typeof(input) === 'undefined') {
 			input = { name: defaultMeetupName, date: Date.now }; 
 		}
-		self.name 				= ko.observable(input.name);
+		self.name 				= ko.observable(input.name).extend({ 
+			required: true
+			, minLength: 3
+		});
 		self.date 				= ko.observable(input.date);
 		self.people 			= ko.observableArray([]);
 		for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
@@ -73,12 +86,10 @@ $(document).ready(function () {
 		// holds the new meetup
 		self.newMeetup = ko.observableArray( [new Meetup()] );
 
-		/**
-		* load entries from db
-		*
-		* it maps the received data into our objects
-		* and then assigns the result to the model
-		*/
+		self.myErrors = ko.observableArray ([]);
+
+		/* load entries from db */
+		/* maps the received data into our objects and then assigns the result to the model */
 		self.load = function() {
 			$.getJSON('/load', function(data) {
 				var mappedMeetups = $.map(data, function(meetup) { return new Meetup(meetup) });
@@ -95,15 +106,28 @@ $(document).ready(function () {
 
 		/* save to db, remember to use ko.toJSON */
 		self.save = function() {
-			$.ajax({
-				type: 'POST',
-				url: '/save',
-				data: ko.toJSON( self.newMeetup() ),
-				success: saveHandler,
-				error: errorHandler,
-				dataType: 'json',
-				contentType: 'application/json' // don't forget this!!!!
-			});	
+
+			var result = ko.validation.group(self, {deep: true});
+			self.myErrors(result() );
+			model.errors.showAllMessages();
+
+			if (self.isValid()) {
+				$.ajax({
+					type: 'POST',
+					url: '/save',
+					data: ko.toJSON( self.newMeetup() ),
+					success: saveHandler,
+					error: errorHandler,
+					dataType: 'json',
+					contentType: 'application/json' // don't forget this!!!!
+				});		
+			} else {
+				// handle validation errors
+
+				// find the first element with validationElement class and set focus on it
+				$('input.validationElement:first').focus();
+			}
+
 		}
 
 		/* handle */
@@ -112,6 +136,16 @@ $(document).ready(function () {
 				self.load();
 			} else {
 				console.log('ERROR: ' + msg.message);
+				var errorMessages = [];
+				if (typeof(msg.error) !== 'undefined') {
+					for (error in msg.error) {
+						errorMessage = { object: error, element: msg.error[error].path, error: msg.error[error].type };
+						console.log(errorMessage);
+						errorMessages.push(errorMessage);
+					}
+				} else { }
+				console.log('Errors summary: ');
+				console.log(errorMessages);	
 			}
 		}
 
@@ -120,6 +154,23 @@ $(document).ready(function () {
 			console.log('ERROR: ' + msg);
 		}
 
+		// set errors to be recurse on newMeetup and aware of changes
+		// self.errors = ko.validation.group(self.newMeetup(), { deep: true, observable: true});
+
+		// configuration (see https://github.com/ericmbarnard/Knockout-Validation/wiki/Configuration)
+		ko.validation.init(
+			{
+				errorMessageClass 			: 'validationMessage'
+				, errorElementClass 		: 'validationElement'
+				, errorClass 				: null
+				, insertMessages 			: false // enable this to insert text messages within the form 
+				, decorateElement 			: true
+				, parseInputAttributes 		: false
+				, messagesOnModified 		: true
+				, messageTemplate 			: null
+				// , grouping 					: { deep: true, observable: true }
+			}
+		);
 	}
 
 	// new instance (only necessary to invoke the load method afterwards)
@@ -130,6 +181,26 @@ $(document).ready(function () {
 	model.load();
 	setInterval(model.load, 1000 * reloadIntervalInSeconds);
 
+
+
+	// custom validation rules
+	ko.validation.rules['myRule'] = {
+
+		validator: function (val, otherVal) {
+				if (val == otherVal) {
+					return true;
+				} else {
+					return false;
+				}
+
+			console.log(otherVal);
+		},
+		message: '{0} field is invalid'// + otherVal.name2
+	};
+	ko.validation.registerExtenders();
+
+
+
 });
 /*]]>*/
 </script>
@@ -137,7 +208,7 @@ $(document).ready(function () {
 <body>
 
 
-<form data-bind="submit: save">
+<form data-bind="submit: save" id="myForm">
 	<div data-bind="foreach: newMeetup" class="newMeetup">
 		Meetup whitelist<br>
 		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person">
@@ -157,7 +228,10 @@ $(document).ready(function () {
 		<br>
 		<input type="submit" data-bind="click: $parent.save" value="Save">
 	</div>
-	
+
+	<div data-bind="foreach:  { data: myErrors, as: 'error' }">
+		<div data-bind="text: error"></div>
+	</div>
 </form>
 
 <br>

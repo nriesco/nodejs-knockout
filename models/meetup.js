@@ -9,11 +9,11 @@ var Interest = module.exports = interestSchema
 
 // person
 var personSchema = new Schema({
-	name 				: { type: String, required: true }
+	name 				: { type: String, required: true, match: new RegExp('.*', "ig") }
 	, lastName 			: { type: String }
 	, interests 		: [Interest]
-	, twitter 			: { type: String }
-	, email 			: { type: String }
+	, twitter 			: { type: String, match: /^@{1}.+/ }
+	, email 			: { type: String, match: /^.+@{1}.+/ }
 })
 var Person = module.exports = personSchema
 
@@ -30,6 +30,10 @@ var Meetup = module.exports = meetupSchema
 
 // person
 personSchema.path('lastName').validate(function (value) {
+	if (typeof(value) === 'undefined') {
+		return false
+	}
+	
 	if (value.toUpperCase() == 'DOE') {
 		return false
 	} else {

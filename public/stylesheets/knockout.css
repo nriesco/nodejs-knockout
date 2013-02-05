@@ -20,6 +20,10 @@ a:active {
   color: blue;
 }
 /* selected link */
+.validationElement {
+  background: OrangeRed;
+  color: white;
+}
 .meetupContainer {
   -webkit-border-radius: 6px 6px 6px 6px;
   -moz-border-radius: 6px 6px 6px 6px;
