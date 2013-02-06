@@ -45,7 +45,14 @@ $(document).ready(function () {
 		if (typeof(input) === 'undefined') {
 			input = { name: defaultName, twitter: defaultTwitter, email: defaultEmail }; 
 		}	
-		self.name 				= ko.observable(input.name).extend({ myRule: { params: 'Rocky', message: "The name MUST be Rocky !" } });
+		self.name 				= ko.observable(input.name).extend({ 
+			required: true
+			, minLength: 5
+			, myRule: { 
+				message: "The name MUST be Rocky !"
+				, params: 'Rocky'
+			}
+		});
 		self.twitter 			= ko.observable(input.twitter).extend({ 
 			required: true
 			, minLength: 5
@@ -54,7 +61,14 @@ $(document).ready(function () {
 				, params: /^@{1}.+/
 			}
 		});
-		self.email 				= ko.observable(input.email);
+		self.email 				= ko.observable(input.email).extend({ 
+			required: true
+			, minLength: 5
+			, pattern : {
+				message: "Please enter a valid e-mail address"
+				, params: /^.+@{1}.+/
+			}
+		});
 		self.interests 			= ko.observableArray([]);
 		for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
 		self.addInterest 		= function() { self.interests.push( new Interest() ) }
