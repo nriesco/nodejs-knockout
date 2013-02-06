@@ -26,10 +26,11 @@ $(document).ready(function () {
 	/* VARIABLES/CONSTANTS */
 	var defaultEmail 				= 'get@one.com';
 	var defaultTwitter 				= '@riesco';
-	defaultTwitter = '';
 	var defaultName 				= 'Rambo';
-	var defaultMeetupName 			= '';
+	var defaultMeetupName 			= 'Dynlang';
 	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production
+
+	defaultEmail = defaultTwitter = defaultName = defaultMeetupName = '';
 
 	/* MODELS */
 	// interest model
@@ -218,10 +219,10 @@ $(document).ready(function () {
 		<input type="text" data-bind="value: name" class="" placeholder="Meetup name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person" class="btn btn-success">
 		<div data-bind="foreach: people">
 			<div>
-				<input type="text" data-bind="value: name">
-				<input type="text" data-bind="value: twitter" placeholder="@your_username">
+				<input type="text" data-bind="value: name" placeholder="name">
+				<input type="text" data-bind="value: twitter" placeholder="@username">
 				<div class="input-append">
-					<input type="text" data-bind="value: email"><input type="button" data-bind="click: $parent.removePerson" value="x" class="btn btn-danger">
+					<input type="text" data-bind="value: email" placeholder="your@email.com"><input type="button" data-bind="click: $parent.removePerson" value="x" class="btn btn-danger">
 				</div>
 
 				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest" class="btn btn-success">
@@ -235,6 +236,8 @@ $(document).ready(function () {
 		</div>
 		<br>
 		<input type="submit" data-bind="click: $parent.save" value="Save" class="btn btn-primary">
+		<input type="button" data-bind="click:  $root.deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
+
 	</div>
 	<br>
 	<div data-bind="foreach:  { data: myErrors, as: 'error' }">
@@ -246,7 +249,7 @@ $(document).ready(function () {
 
 <br>
 
-<div data-bind="foreach: meetups">
+<div data-bind="foreach: meetups" class="newMeetup">
 	<div class="meetupContainer">
 		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: formattedDate"></span>)
 		<br>
@@ -270,11 +273,11 @@ $(document).ready(function () {
 </div>
 
 
-<input type="button" data-bind="click:  deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
-
-
-
 <br><br><br>
+<div class="newMeetup">
+
+
+
 Bootstrap tests:
 <br>
 <div class="input-append">
@@ -298,6 +301,8 @@ Bootstrap tests:
     <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
     <button class="btn btn-primary">Save changes</button>
   </div>
+</div>
+
 </div>
 </body>
 </html>

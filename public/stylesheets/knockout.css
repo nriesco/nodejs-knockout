@@ -46,9 +46,16 @@ a:active {
   -moz-border-radius: 6px 6px 6px 6px;
   border-radius: 6px 6px 6px 6px;
   background: green;
+  background: #777;
   color: white;
+  /*color: orange;*/
+
   padding: 10px;
-  margin: 10px;
+  margin-bottom: 15px;
+  /*margin: 10px;*/
+
+  /*margin-bottom: 15px;*/
+
 }
 .newMeetup {
   -webkit-border-radius: 5px 5px 5px 5px;
