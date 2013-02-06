@@ -6,11 +6,34 @@
 	border-radius: @pixels @pixels @pixels @pixels;
 }
 
+.shadow() {
+	-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+	box-shadow: 0 1px 2px rgba(0,0,0,.05);
+}
+
+// Placeholder text (extract from bootstrap .less)
+// -------------------------
+.placeholder(@color: red) {
+	&:-moz-placeholder {
+		color: @color;
+	}
+	&:-ms-input-placeholder {
+		color: @color;
+	}
+	&::-webkit-input-placeholder {
+		color: @color;
+	}
+}
+
 
 body {
-  padding: 30px;
-  padding-top: 15px;
-  font: 14px Helvetica, Arial, sans-serif;
+	padding: 30px;
+	padding-top: 15px;
+	font: 14px Helvetica, Arial, sans-serif;
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #f5f5f5;
 }
 
 @linkColor: #ffffff;
@@ -24,9 +47,18 @@ a:hover {color: orange;}  /* mouse over link */
 a:active {color:blue;}  /* selected link */
 
 
+/*@errorBackground: #FFFFCC;*/
+@errorBackground: rgb(252, 248, 227);
+@errorBackground: rgb(242, 222, 222);
+@errorText: #900000;
+@errorText: rgb(185, 74, 72);
+
 .validationElement {
-	background: OrangeRed;
-	color: white;
+	background: @errorBackground !important;
+	/*color: white !important;*/
+	/*.placeholder(white);*/
+	color: @errorText !important;
+	.placeholder( @errorText );
 }
 
 .meetupContainer {
@@ -38,11 +70,14 @@ a:active {color:blue;}  /* selected link */
 }
 
 .newMeetup {
-	.rounded(6px);
-	background: orange;
+	.rounded(5px);
+	border: 1px solid #e5e5e5;
+	/*background: orange;*/
+	background: white;
 	color: white;
-	padding: 10px;
-	margin: 10px;
+	padding: 20px;
+	/*margin: 10px;*/
+	.shadow();
 }
 
 .deleteAll {
