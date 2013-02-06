@@ -2,6 +2,9 @@ body {
   padding: 30px;
   padding-top: 15px;
   font: 14px Helvetica, Arial, sans-serif;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
 }
 a:link {
   color: #ffffff;
@@ -20,9 +23,23 @@ a:active {
   color: blue;
 }
 /* selected link */
+/*@errorBackground: #FFFFCC;*/
 .validationElement {
-  background: OrangeRed;
-  color: white;
+  background: #f2dede !important;
+  /*color: white !important;*/
+
+  /*.placeholder(white);*/
+
+  color: #b94a48 !important;
+}
+.validationElement:-moz-placeholder {
+  color: #b94a48;
+}
+.validationElement:-ms-input-placeholder {
+  color: #b94a48;
+}
+.validationElement::-webkit-input-placeholder {
+  color: #b94a48;
 }
 .meetupContainer {
   -webkit-border-radius: 6px 6px 6px 6px;
@@ -34,13 +51,20 @@ a:active {
   margin: 10px;
 }
 .newMeetup {
-  -webkit-border-radius: 6px 6px 6px 6px;
-  -moz-border-radius: 6px 6px 6px 6px;
-  border-radius: 6px 6px 6px 6px;
-  background: orange;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+  border: 1px solid #e5e5e5;
+  /*background: orange;*/
+
+  background: white;
   color: white;
-  padding: 10px;
-  margin: 10px;
+  padding: 20px;
+  /*margin: 10px;*/
+
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .deleteAll {
   -webkit-border-radius: 6px 6px 6px 6px;

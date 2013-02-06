@@ -7,8 +7,12 @@
 <script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
 <script type='text/javascript' src="/javascripts/knockout.validation.min.js"></script>
 
-<link rel="stylesheet" href="/stylesheets/knockout.css" />
 
+<!--<script type='text/javascript' src="/bootstrap/js/bootstrap.min.js"></script>-->
+
+
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="/stylesheets/knockout.css" />
 
 <script type='text/javascript'>
 /*<![CDATA[*/
@@ -24,7 +28,7 @@ $(document).ready(function () {
 	var defaultTwitter 				= '@riesco';
 	defaultTwitter = '';
 	var defaultName 				= 'Rambo';
-	var defaultMeetupName 			= 'Dynlang';
+	var defaultMeetupName 			= '';
 	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production
 
 	/* MODELS */
@@ -208,29 +212,35 @@ $(document).ready(function () {
 <body>
 
 
-<form data-bind="submit: save" id="myForm">
-	<div data-bind="foreach: newMeetup" class="newMeetup">
+<form data-bind="submit: save" id="myForm" class="newMeetup">
+	<div data-bind="foreach: newMeetup" class="form-inline">
 		Meetup whitelist<br>
-		<input type="text" data-bind="value: name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person">
+		<input type="text" data-bind="value: name" class="" placeholder="Meetup name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person" class="btn btn-success">
 		<div data-bind="foreach: people">
 			<div>
 				<input type="text" data-bind="value: name">
-				<input type="text" data-bind="value: twitter">
-				<input type="text" data-bind="value: email">
-				<input type="button" data-bind="click: $parent.removePerson" value="x">
-				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest">
+				<input type="text" data-bind="value: twitter" placeholder="@your_username">
+				<div class="input-append">
+					<input type="text" data-bind="value: email"><input type="button" data-bind="click: $parent.removePerson" value="x" class="btn btn-danger">
+				</div>
+
+				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest" class="btn btn-success">
 				<div data-bind="foreach: interests">
-					<input type="text" data-bind="value: name">
-					<input type="button" data-bind="click: $parent.removeInterest" value="x">
+					<div class="input-append">
+						<input type="text" data-bind="value: name">
+						<input type="button" data-bind="click: $parent.removeInterest" value="x" class="btn btn-danger">
+					</div>
 				</div>	
 			</div>
 		</div>
 		<br>
-		<input type="submit" data-bind="click: $parent.save" value="Save">
+		<input type="submit" data-bind="click: $parent.save" value="Save" class="btn btn-primary">
 	</div>
-
+	<br>
 	<div data-bind="foreach:  { data: myErrors, as: 'error' }">
-		<div data-bind="text: error"></div>
+		<div class="alert alert-error">
+			<strong>Warning!</strong> <span data-bind="text: error"></span>
+		</div>
 	</div>
 </form>
 
@@ -255,14 +265,39 @@ $(document).ready(function () {
 				</div>
 			</li>
 		</ol>
-		<span data-bind="if: people().length == 0">There was no one there? Really?</span>
+		<span data-bind="if: people().length == 0">No one there? Really?</span>
 	</div>
 </div>
 
-<div class="deleteAll">
-	<input type="button" data-bind="click: deleteAll" value="DELETE ALL ENTRIES">
+
+<input type="button" data-bind="click:  deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
+
+
+
+<br><br><br>
+Bootstrap tests:
+<br>
+<div class="input-append">
+  <input class="span2" id="appendedInputButton" type="text">
+  <button class="btn" type="button">Go!</button>
 </div>
 
-
+<!-- Button to trigger modal -->
+<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Launch demo modal</a>
+ 
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <p>contenido del modal</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary">Save changes</button>
+  </div>
+</div>
 </body>
 </html>
