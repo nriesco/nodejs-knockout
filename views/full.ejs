@@ -238,10 +238,11 @@ $(document).ready(function () {
 </head>
 <body>
 
-<div class="dataBlock">
-	<form data-bind="submit: save" id="myForm" class="">
+
+<form data-bind="submit: save" class="">
+	<div class="dataBlock">
 		<div data-bind="foreach: newMeetup" class="form-inline">
-			Meetup whitelist<br>
+			
 			<input type="text" data-bind="value: name" class="" placeholder="Meetup name">
 			<input type="button" data-bind="click: addPerson, enable: lessThanLimit" value="+participant" class="btn btn-success">
 			
@@ -274,8 +275,8 @@ $(document).ready(function () {
 				<strong>Warning!</strong> <span data-bind="text: error"></span>
 			</div>
 		</div>
-	</form>
-</div>
+	</div>
+</form>
 
 <!-- ko if: meetups().length > 0 -->
 <div data-bind="foreach: meetups" class="dataBlock">
