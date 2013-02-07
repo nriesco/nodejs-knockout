@@ -53,6 +53,7 @@ body {
   -moz-border-radius: 4px 4px 4px 4px;
   border-radius: 4px 4px 4px 4px;
   background: #777777;
+  color: white;
   padding: 10px;
   margin-bottom: 15px;
 }
@@ -65,7 +66,8 @@ body {
   -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   background: white;
-  color: white;
+  /*color: white;*/
+
   padding: 20px;
   margin-top: 20px;
 }

@@ -242,7 +242,7 @@ $(document).ready(function () {
 <form data-bind="submit: save" class="">
 	<div class="dataBlock">
 		<div data-bind="foreach: newMeetup" class="form-inline">
-			
+			<h2>Meetup Whitelist</h2>
 			<input type="text" data-bind="value: name" class="" placeholder="Meetup name">
 			<input type="button" data-bind="click: addPerson, enable: lessThanLimit" value="+participant" class="btn btn-success">
 			
@@ -257,7 +257,7 @@ $(document).ready(function () {
 					<input type="button" data-bind="click: addInterest, enable: lessThanLimit" value="+interest" class="btn btn-success">
 					<div data-bind="foreach: interests">
 						<div class="input-append interestsContainer">
-							<input type="text" data-bind="value: name">
+							<input type="text" data-bind="value: name" class="">
 							<input type="button" data-bind="click: $parent.removeInterest" value="x" class="btn btn-danger">
 						</div>
 					</div>	
@@ -279,7 +279,11 @@ $(document).ready(function () {
 </form>
 
 <!-- ko if: meetups().length > 0 -->
-<div data-bind="foreach: meetups" class="dataBlock">
+
+<div class="dataBlock">
+
+	<h2>Meetups</h2>
+	<!-- ko foreach: meetups -->
 	<div class="meetupContainer">
 		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: formattedDate"></span>)
 		<br>
@@ -300,6 +304,7 @@ $(document).ready(function () {
 		</ol>
 		<span data-bind="if: people().length == 0">No one there? Really?</span>
 	</div>
+	<!-- /ko -->
 </div>
 <!-- /ko -->
 
