@@ -28,9 +28,13 @@ $(document).ready(function () {
 	var defaultTwitter 				= '@riesco';
 	var defaultName 				= 'Rambo';
 	var defaultMeetupName 			= 'Dynlang';
-	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production
-
 	defaultEmail = defaultTwitter = defaultName = defaultMeetupName = '';
+
+	var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production environment
+	var maxParticipants 			= 30;
+	var maxInterests 				= 4;
+
+	
 
 	/* MODELS */
 	// interest model
@@ -73,6 +77,10 @@ $(document).ready(function () {
 		for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
 		self.addInterest 		= function() { self.interests.push( new Interest() ) }
 		self.removeInterest 	= function(item) { self.interests.remove(item) }
+
+		self.lessThanLimit 		= ko.computed(function () {
+			return (self.interests().length < maxInterests);
+		}, self)
 	}
 	// meetup model
 	var Meetup = function(input) {
@@ -89,6 +97,10 @@ $(document).ready(function () {
 		for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
 		self.addPerson 			= function() { self.people.push( new Person() ) }
 		self.removePerson 		= function(item) { self.people.remove(item) }
+
+		self.lessThanLimit 		= ko.computed(function () {
+			return (self.people().length < maxParticipants);
+		}, self)
 
 		self.formattedDate 		= ko.computed(function() {
 			var date =  new Date(self.date());
@@ -226,44 +238,47 @@ $(document).ready(function () {
 </head>
 <body>
 
-
-<form data-bind="submit: save" id="myForm" class="newMeetup">
-	<div data-bind="foreach: newMeetup" class="form-inline">
-		Meetup whitelist<br>
-		<input type="text" data-bind="value: name" class="" placeholder="Meetup name"><input type="button" data-bind="click: addPerson, enable: people().length < 300" value="+person" class="btn btn-success">
-		<div data-bind="foreach: people">
-			<div>
-				<input type="text" data-bind="value: name" placeholder="name">
-				<input type="text" data-bind="value: twitter" placeholder="@username">
-				<div class="input-append">
-					<input type="text" data-bind="value: email" placeholder="your@email.com"><input type="button" data-bind="click: $parent.removePerson" value="x" class="btn btn-danger">
-				</div>
-
-				<input type="button" data-bind="click: addInterest, enable: interests().length < 5" value="+interest" class="btn btn-success">
-				<div data-bind="foreach: interests">
+<div class="dataBlock">
+	<form data-bind="submit: save" id="myForm" class="">
+		<div data-bind="foreach: newMeetup" class="form-inline">
+			Meetup whitelist<br>
+			<input type="text" data-bind="value: name" class="" placeholder="Meetup name">
+			<input type="button" data-bind="click: addPerson, enable: lessThanLimit" value="+participant" class="btn btn-success">
+			
+			<div data-bind="foreach: people">
+				<div class="peopleContainer">
+					<input type="text" data-bind="value: name" placeholder="name">
+					<input type="text" data-bind="value: twitter" placeholder="@username">
 					<div class="input-append">
-						<input type="text" data-bind="value: name">
-						<input type="button" data-bind="click: $parent.removeInterest" value="x" class="btn btn-danger">
+						<input type="text" data-bind="value: email" placeholder="your@email.com"><input type="button" data-bind="click: $parent.removePerson" value="x" class="btn btn-danger">
 					</div>
-				</div>	
+
+					<input type="button" data-bind="click: addInterest, enable: lessThanLimit" value="+interest" class="btn btn-success">
+					<div data-bind="foreach: interests">
+						<div class="input-append interestsContainer">
+							<input type="text" data-bind="value: name">
+							<input type="button" data-bind="click: $parent.removeInterest" value="x" class="btn btn-danger">
+						</div>
+					</div>	
+				</div>
+			</div>
+
+			<div class="buttonsContainer" style="">
+				<input type="submit" data-bind="click: $parent.save" value="Save" class="btn btn-primary">
+				<input type="button" data-bind="click:  $root.deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
 			</div>
 		</div>
 		<br>
-		<input type="submit" data-bind="click: $parent.save" value="Save" class="btn btn-primary">
-		<input type="button" data-bind="click:  $root.deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
-
-	</div>
-	<br>
-	<div data-bind="foreach:  { data: myErrors, as: 'error' }">
-		<div class="alert alert-error">
-			<strong>Warning!</strong> <span data-bind="text: error"></span>
+		<div data-bind="foreach:  { data: myErrors, as: 'error' }">
+			<div class="alert alert-error">
+				<strong>Warning!</strong> <span data-bind="text: error"></span>
+			</div>
 		</div>
-	</div>
-</form>
+	</form>
+</div>
 
-<br>
-
-<div data-bind="foreach: meetups" class="newMeetup">
+<!-- ko if: meetups().length > 0 -->
+<div data-bind="foreach: meetups" class="dataBlock">
 	<div class="meetupContainer">
 		Meetup: <span data-bind="text: name"></span> (<span data-bind="text: formattedDate"></span>)
 		<br>
@@ -285,38 +300,36 @@ $(document).ready(function () {
 		<span data-bind="if: people().length == 0">No one there? Really?</span>
 	</div>
 </div>
+<!-- /ko -->
 
+<!-- ko if: false -->
+<div class="dataBlock">
+	Bootstrap tests:
+	<br>
+	<div class="input-append">
+	  <input class="span2" id="appendedInputButton" type="text">
+	  <button class="btn" type="button">Go!</button>
+	</div>
 
-<br><br><br>
-<div class="newMeetup">
-
-
-
-Bootstrap tests:
-<br>
-<div class="input-append">
-  <input class="span2" id="appendedInputButton" type="text">
-  <button class="btn" type="button">Go!</button>
+	<!-- Button to trigger modal -->
+	<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Launch demo modal</a>
+	 
+	<!-- Modal -->
+	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	    <h3 id="myModalLabel">Modal header</h3>
+	  </div>
+	  <div class="modal-body">
+	    <p>contenido del modal</p>
+	  </div>
+	  <div class="modal-footer">
+	    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	    <button class="btn btn-primary">Save changes</button>
+	  </div>
+	</div>
 </div>
+<!-- /ko -->
 
-<!-- Button to trigger modal -->
-<a href="#myModal" role="button" class="btn btn-primary" data-toggle="modal">Launch demo modal</a>
- 
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Modal header</h3>
-  </div>
-  <div class="modal-body">
-    <p>contenido del modal</p>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button class="btn btn-primary">Save changes</button>
-  </div>
-</div>
-
-</div>
 </body>
 </html>
