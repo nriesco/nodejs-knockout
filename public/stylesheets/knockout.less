@@ -58,11 +58,10 @@ a:active {color:blue;}  /* selected link */
 // html
 body {
 	padding: 30px;
-	padding-top: 15px;
 	font: 14px Helvetica, Arial, sans-serif;
-	padding-top: 40px;
-	padding-bottom: 40px;
+	padding-top: 30px;
 	background-color: @fondoGris;
+	color: black;
 }
 
 .peopleContainer {
@@ -84,7 +83,6 @@ body {
 .meetupContainer {
 	.rounded(4px);
 	background: @backgroundMeetupContainer;
-	color: white;
 	padding: 10px;
 	margin-bottom: 15px;
 }
@@ -92,11 +90,9 @@ body {
 .dataBlock {
 	.rounded(5px);
 	.border();
-	/*background: orange;*/
+	.shadow();
 	background: white;
 	color: white;
 	padding: 20px;
 	margin-top: 20px;
-	/*margin: 10px;*/
-	.shadow();
 }
