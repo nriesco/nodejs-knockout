@@ -1,4 +1,4 @@
-// Creación de la Conexión
+// connection
 var mongoose 	= require('mongoose')
 	, db_lnk 	= 'mongodb://localhost/testMeetup'
 	, db 		= mongoose.createConnection(db_lnk)
@@ -12,9 +12,6 @@ var meetupSchema = require('../models/meetup')
 */
 exports.save = function (req, res, next) {
 	
-	// var datos = req.body
-	// var dato = datos[0]
-
 	var data = req.body[0]
 	var meetup = new Meetup(data)
 	meetup.save(function (err) {
@@ -22,13 +19,12 @@ exports.save = function (req, res, next) {
 			console.log(err.errors)
 			// res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
 			try {
-				res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+				res.end( JSON.stringify( { result: false, message: 'ERROR: item not saved', error: err.errors } ) )
 			} catch (e) {
-				res.end( JSON.stringify( { result: false, message: 'error al guardar los datos' } ) )
+				res.end( JSON.stringify( { result: false, message: 'ERROR: item not saved' } ) )
 			}
-			
 		} else {
-			res.end( JSON.stringify( { result: true, message: 'datos guardados (solo primera entrada por ahora)' } ) )
+			res.end( JSON.stringify( { result: true, message: 'item saved' } ) )
 		}
 	})
 }
@@ -42,40 +38,38 @@ exports.update = function (req, res, next) {
 	var meetup = new Meetup(data)
 	var id = data._id
 	delete data._id
-	// var up = { $set: dato }
 	Meetup.update({_id: id}, data, function(err, affected) {
 		if (err) {
-			// console.log(err)
-			res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+			res.end( JSON.stringify( { result: false, message: 'ERROR: item not saved', error: err.errors } ) )
 		} else {
 			console.log('affected rows %d', affected);		
-			res.end( JSON.stringify( { result: true, message: 'todo ok. Cantidad de filas afectadas: ' + affected } ) )	
+			res.end( JSON.stringify( { result: true, message: 'item saved, affected rows: ' + affected } ) )	
 		}
 	});
-
 }
 
 /**
-* obtiene todas las campanias y las retorna como json
+* get campaigns
 */
 exports.load = function (req, res, next) {
 	Meetup.find( { $query: {}, $orderby: { _id : 1 } }, function (err, docs) {
-		var arregloConCampanias = []
+		var campaignArray = []
 		docs.forEach(function (meetup) {
-			arregloConCampanias.push(meetup)
+			campaignArray.push(meetup)
 		})
-		var resultado = JSON.stringify(arregloConCampanias)
-		res.end(resultado)
+		res.end(JSON.stringify(campaignArray))
 	})
 }
 
-
+/**
+* delete all entries
+*/
 exports.deleteAll = function (req, res, next) {
-	Meetup.find( { $query: {}, $orderby: { _id : 1 } }, function (err, docs) {
-		docs.forEach(function (meetup) {
-			meetup.remove()
-		})
-		var result = JSON.stringify( {result: true} )
-		res.end(result)
+	Meetup.remove({}, function (err) {
+		if (!err) {
+			res.end(JSON.stringify( {result: true} ))
+		} else {
+			res.end(JSON.stringify( {result: false} ))
+		}
 	})
 }
