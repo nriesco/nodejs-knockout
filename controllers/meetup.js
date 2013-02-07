@@ -17,7 +17,7 @@ exports.save = function (req, res, next) {
 	meetup.save(function (err) {
 		if (err) {
 			console.log(err.errors)
-			// res.end( JSON.stringify( { result: false, message: 'error al guardar los datos', error: err.errors } ) )
+			// try/catch is needed only if you wan't to retreive the errors in a safe way ([Circular])
 			try {
 				res.end( JSON.stringify( { result: false, message: 'ERROR: item not saved', error: err.errors } ) )
 			} catch (e) {
