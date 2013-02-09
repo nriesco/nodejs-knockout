@@ -1,5 +1,12 @@
 var Schema = require('mongoose').Schema
 
+/* @todo: try references
+*
+* type: Schema.Types.ObjectId, ref: 'Person'
+* type: Schema.Types.ObjectId, ref: 'person'
+* http://mongoosejs.com/docs/populate.html
+*/
+
 
 // interest
 var interestSchema = new Schema({
@@ -8,8 +15,9 @@ var interestSchema = new Schema({
 var Interest = module.exports = interestSchema
 
 // person
+var regExp = '.*';
 var personSchema = new Schema({
-	name 				: { type: String, required: true, match: new RegExp('.*', "ig") }
+	name 				: { type: String, required: true, match: new RegExp(regExp, "ig") }
 	, lastName 			: { type: String }
 	, interests 		: [Interest]
 	, twitter 			: { type: String, match: /^@{1}.+/ }

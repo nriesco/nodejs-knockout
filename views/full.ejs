@@ -6,9 +6,14 @@
 <script type='text/javascript' src='/javascripts/jquery-1.9.0.min.js'></script>
 <script type='text/javascript' src='/javascripts/knockout-2.2.1.js'></script>
 <script type='text/javascript' src="/javascripts/knockout.validation.min.js"></script>
+<!-- <script type="text/javascript" src ="/javascripts/knockout.validation/es-ES.js"> </script> -->
+<!-- <script type='text/javascript' src="/bootstrap/js/bootstrap.min.js"></script> -->
 
 
-<!--<script type='text/javascript' src="/bootstrap/js/bootstrap.min.js"></script>-->
+<script type="text/javascript" src="/javascripts/pnotify/jquery.pnotify.min.js"></script>
+<link href="/javascripts/pnotify/jquery.pnotify.default.css" media="all" rel="stylesheet" type="text/css" />
+<!-- Include this file if you are using Pines Icons. -->
+<link href="/javascripts/pnotify/jquery.pnotify.default.icons.css" media="all" rel="stylesheet" type="text/css" />
 
 
 <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
@@ -232,14 +237,74 @@ $(document).ready(function () {
 
 
 
+	$.pnotify({
+		title: 'Custom Styling',
+		text: 'I have an additional class that\'s used to give me special styling. I always wanted to be pretty.',
+		addclass: 'myclass1',
+		icon: 'picon picon-32 picon-fill-color',
+		opacity: .8,
+		nonblock: true,
+		nonblock_opacity: .2
+	});
+
+	$.pnotify({
+		title: 'Regular Success',
+		text: 'That thing that you were trying to do worked!',
+		type: 'success'
+	});
+
 });
+
+
+
+
+// $(function(){
+// 	$.pnotify({
+// 		title: 'Regular Notice2',
+// 		text: 'Check me out! I\'m a notice2.'
+// 	});
+// });
+
+// function show_stack_bar_top(type) {
+//     var opts = {
+//         title: "Over Here",
+//         text: "Check me out. I'm in a different stack.",
+//         addclass: "stack-bar-top",
+//         cornerclass: "",
+//         width: "100%",
+//         stack: stack_bar_top
+//     };
+//     switch (type) {
+//     case 'error':
+//         opts.title = "Oh No";
+//         opts.text = "Watch out for that water tower!";
+//         opts.type = "error";
+//         break;
+//     case 'info':
+//         opts.title = "Breaking News";
+//         opts.text = "Have you met Ted?";
+//         opts.type = "info";
+//         break;
+//     case 'success':
+//         opts.title = "Good News Everyone";
+//         opts.text = "I've invented a device that bites shiny metal asses.";
+//         opts.type = "success";
+//         break;
+//     }
+//     $.pnotify(opts);
+// }
+
+
+// show_stack_bar_top('error');
+
+
 /*]]>*/
 </script>
 </head>
 <body>
 
 
-<form data-bind="submit: save" class="">
+<form data-bind="submit: $root.save" class="">
 	<div class="dataBlock">
 		<div data-bind="foreach: newMeetup" class="form-inline">
 			<h2>Meetup Whitelist</h2>
@@ -265,7 +330,7 @@ $(document).ready(function () {
 			</div>
 
 			<div class="buttonsContainer" style="">
-				<input type="submit" data-bind="click: $parent.save" value="Save" class="btn btn-primary">
+				<input type="submit" data-bind="click: $root.save" value="Save" class="btn btn-primary">
 				<input type="button" data-bind="click:  $root.deleteAll" value="DELETE ALL ENTRIES" class="btn btn-danger">
 			</div>
 		</div>
