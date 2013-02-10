@@ -21,7 +21,7 @@ finally just start your server and point your browser to it...
 ````
 node app.js
 ````
-Visit [http://localhost:3030](http://localhost:3030 "Title")
+Visit [http://localhost:3000](http://localhost:3000 "Title")
 
 
 
