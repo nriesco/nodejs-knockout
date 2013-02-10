@@ -9,14 +9,14 @@
 <!-- <script type="text/javascript" src ="/javascripts/knockout.validation/es-ES.js"> </script> -->
 <!-- <script type='text/javascript' src="/bootstrap/js/bootstrap.min.js"></script> -->
 
-
+<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
 <script type="text/javascript" src="/javascripts/pnotify/jquery.pnotify.min.js"></script>
 <link href="/javascripts/pnotify/jquery.pnotify.default.css" media="all" rel="stylesheet" type="text/css" />
 <!-- Include this file if you are using Pines Icons. -->
 <link href="/javascripts/pnotify/jquery.pnotify.default.icons.css" media="all" rel="stylesheet" type="text/css" />
 
 
-<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+
 <link rel="stylesheet" href="/stylesheets/knockout.css" />
 
 <script type='text/javascript'>
@@ -39,7 +39,6 @@ $(document).ready(function () {
 	var maxParticipants 			= 30;
 	var maxInterests 				= 4;
 
-	
 
 	/* MODELS */
 	// interest model
@@ -137,6 +136,7 @@ $(document).ready(function () {
 		self.deleteAll = function() {
 			$.getJSON("/deleteAll", function(data) {
 				self.load();
+				show_stack_bar_top('success', 'All entries deleted', '', 1);
 			}); 
 		}
 
@@ -159,6 +159,7 @@ $(document).ready(function () {
 				});		
 			} else {
 				// handle validation errors
+				show_stack_bar_top('error', 'Something went wrong', 'Please fix the errors', 3);
 
 				// find the first element with validationElement class and set focus on it
 				$('input.validationElement:first').focus();
@@ -170,6 +171,7 @@ $(document).ready(function () {
 		function saveHandler(msg) { 
 			if (msg.result) {
 				self.load();
+				show_stack_bar_top('success', 'Meetup created', '', 1);
 			} else {
 				console.log('ERROR: ' + msg.message);
 				var errorMessages = [];
@@ -189,9 +191,6 @@ $(document).ready(function () {
 		function errorHandler(msg) {
 			console.log('ERROR: ' + msg);
 		}
-
-		// set errors to be recurse on newMeetup and aware of changes
-		// self.errors = ko.validation.group(self.newMeetup(), { deep: true, observable: true});
 
 		// configuration (see https://github.com/ericmbarnard/Knockout-Validation/wiki/Configuration)
 		ko.validation.init(
@@ -237,65 +236,61 @@ $(document).ready(function () {
 
 
 
-	$.pnotify({
-		title: 'Custom Styling',
-		text: 'I have an additional class that\'s used to give me special styling. I always wanted to be pretty.',
-		addclass: 'myclass1',
-		icon: 'picon picon-32 picon-fill-color',
-		opacity: .8,
-		nonblock: true,
-		nonblock_opacity: .2
-	});
 
-	$.pnotify({
-		title: 'Regular Success',
-		text: 'That thing that you were trying to do worked!',
-		type: 'success'
-	});
 
 });
 
 
 
+// notification center
 
-// $(function(){
-// 	$.pnotify({
-// 		title: 'Regular Notice2',
-// 		text: 'Check me out! I\'m a notice2.'
-// 	});
-// });
+// options
+var stack_topleft = {"dir1": "down", "dir2": "right", "push": "top"};
+var stack_bottomleft = {"dir1": "right", "dir2": "up", "push": "top"};
+var stack_custom = {"dir1": "right", "dir2": "down"};
+var stack_custom2 = {"dir1": "left", "dir2": "up", "push": "top"};
+var stack_bar_top = {"dir1": "down", "dir2": "right", "push": "top", "spacing1": 0, "spacing2": 0};
+// var stack_bar_top2 = {"dir1": "down", "dir2": "right", "push": "bottom", "spacing1": 0, "spacing2": 0}; // no funciona bien al desaparecer
+var stack_bar_bottom = {"dir1": "up", "dir2": "right", "spacing1": 0, "spacing2": 0};
+var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 25, "firstpos2": 25};
 
-// function show_stack_bar_top(type) {
-//     var opts = {
-//         title: "Over Here",
-//         text: "Check me out. I'm in a different stack.",
-//         addclass: "stack-bar-top",
-//         cornerclass: "",
-//         width: "100%",
-//         stack: stack_bar_top
-//     };
-//     switch (type) {
-//     case 'error':
-//         opts.title = "Oh No";
-//         opts.text = "Watch out for that water tower!";
-//         opts.type = "error";
-//         break;
-//     case 'info':
-//         opts.title = "Breaking News";
-//         opts.text = "Have you met Ted?";
-//         opts.type = "info";
-//         break;
-//     case 'success':
-//         opts.title = "Good News Everyone";
-//         opts.text = "I've invented a device that bites shiny metal asses.";
-//         opts.type = "success";
-//         break;
-//     }
-//     $.pnotify(opts);
-// }
+// 
+function show_stack_bar_top(type, title, text) {
+	var options = {
+		title: "Over Here"
+		, text: "Check me out. I'm in a different stack."
+		, addclass: "stack-bar-top"
+		, cornerclass: ""
+		, width: "100%"
+		, opacity: .98
+		, nonblock: true
+		, nonblock_opacity: .2
+		, stack: stack_bar_top
+		, text: 	text
+		, title: 	title
+		, type: 	type
+		// , icon: 'icon-envelope'
+		, delay: 	4000
+		, history: false
+	};
 
+	if (type == 'success') {
+		options.icon = 'icon-ok'
+	} else if (type == 'info') {
+		options.icon = 'icon-info-sign'
+	} else if (type == 'notice') {
+		options.icon = 'icon-warning-sign'
+	} else if (type == 'error') {
+		options.icon = 'icon-warning-sign'
+	}
 
-// show_stack_bar_top('error');
+	$.pnotify(options);
+}
+
+// show_stack_bar_top('success', 'Done', '');
+// show_stack_bar_top('error', 'Something went wrong', 'Please fix');
+// show_stack_bar_top('info', 'Info title', 'some info text');
+// show_stack_bar_top('notice', 'Be careful', 'some text');
 
 
 /*]]>*/
@@ -342,6 +337,7 @@ $(document).ready(function () {
 		</div>
 	</div>
 </form>
+
 
 <!-- ko if: meetups().length > 0 -->
 
