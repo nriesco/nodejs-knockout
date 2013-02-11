@@ -159,10 +159,12 @@ $(document).ready(function () {
 				});		
 			} else {
 				// handle validation errors
-				show_stack_bar_top('error', 'Something went wrong', 'Please fix the errors', 3);
-
+				
 				// find the first element with validationElement class and set focus on it
 				$('input.validationElement:first').focus();
+
+				show_stack_bar_top('error', 'Something went wrong', 'Please fix the errors', 3);
+
 			}
 
 		}
