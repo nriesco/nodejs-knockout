@@ -56,10 +56,6 @@ $(document).ready(function () {
 		self.name 				= ko.observable(input.name).extend({ 
 			required: true
 			, minLength: 5
-			, myRule: { 
-				message: "The name MUST be Rocky !"
-				, params: 'Rocky'
-			}
 		});
 		self.twitter 			= ko.observable(input.twitter).extend({ 
 			required: true
@@ -221,20 +217,20 @@ $(document).ready(function () {
 
 
 	// custom validation rules
-	ko.validation.rules['myRule'] = {
+	// ko.validation.rules['myRule'] = {
 
-		validator: function (val, otherVal) {
-				if (val == otherVal) {
-					return true;
-				} else {
-					return false;
-				}
+	// 	validator: function (val, otherVal) {
+	// 			if (val == otherVal) {
+	// 				return true;
+	// 			} else {
+	// 				return false;
+	// 			}
 
-			console.log(otherVal);
-		},
-		message: '{0} field is invalid'// + otherVal.name2
-	};
-	ko.validation.registerExtenders();
+	// 		console.log(otherVal);
+	// 	},
+	// 	message: '{0} field is invalid'// + otherVal.name2
+	// };
+	// ko.validation.registerExtenders();
 
 
 
