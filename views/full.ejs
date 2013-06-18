@@ -28,24 +28,37 @@
 /* ------------------------------------------------- */
 
 /* VARIABLES/CONSTANTS */
-var defaultEmail 				= 'get@one.com';
-var defaultTwitter 				= '@riesco';
-var defaultName 				= 'Rambo';
-var defaultMeetupName 			= 'Dynlang';
-defaultEmail = defaultTwitter = defaultName = defaultMeetupName = '';
+var defaultEmail 								= 'get@one.com';
+var defaultTwitter 							= '@riesco';
+var defaultName 								= 'Rambo';
+var defaultMeetupName 					= 'Dynlang';
+defaultEmail = defaultTwitter 	= defaultName = defaultMeetupName = '';
 
 var model;
+var socket;
 
-var reloadIntervalInSeconds 	= 5; // you may wan't to reduce this value for production environment
-var maxParticipants 			= 30;
-var maxInterests 				= 4;
+var reloadIntervalInSeconds 		= 5; // you may wan't to reduce this value for production environment
+var maxParticipants 						= 30;
+var maxInterests 								= 4;
+
+
+/**
+* this will reload the content when the ws receives a needsToBeUpdated event
+*/
+function loadSocket() {
+  socket.on('needsToBeUpdated', function (data) {
+    console.log('the content will be reloaded!')
+    model.load();
+  });
+}
+
 
 /* MODELS */
 // interest model
 var Interest = function(input) {
 	var self = this;
 	if (typeof(input) === 'undefined') { input = { name: 'javascript' }; }	
-	self.name 				= ko.observable(input.name);
+	self.name 										= ko.observable(input.name);
 }
 // person model
 var Person = function(input) {
@@ -53,11 +66,11 @@ var Person = function(input) {
 	if (typeof(input) === 'undefined') {
 		input = { name: defaultName, twitter: defaultTwitter, email: defaultEmail }; 
 	}	
-	self.name 				= ko.observable(input.name).extend({ 
+	self.name 										= ko.observable(input.name).extend({ 
 		required: true
 		, minLength: 3
 	});
-	self.twitter 			= ko.observable(input.twitter).extend({ 
+	self.twitter 									= ko.observable(input.twitter).extend({ 
 		required: true
 		, minLength: 5
 		, pattern : {
@@ -65,7 +78,7 @@ var Person = function(input) {
 			, params: /^@{1}.+/
 		}
 	});
-	self.email 				= ko.observable(input.email).extend({ 
+	self.email 										= ko.observable(input.email).extend({ 
 		required: true
 		, minLength: 5
 		, pattern : {
@@ -73,12 +86,12 @@ var Person = function(input) {
 			, params: /^.+@{1}.+/
 		}
 	});
-	self.interests 			= ko.observableArray([]);
+	self.interests 								= ko.observableArray([]);
 	for (var i in input.interests) { self.interests.push( new Interest(input.interests[i]) ) }
-	self.addInterest 		= function() { self.interests.push( new Interest() ) }
-	self.removeInterest 	= function(item) { self.interests.remove(item) }
+	self.addInterest 							= function() { self.interests.push( new Interest() ) }
+	self.removeInterest 					= function(item) { self.interests.remove(item) }
 
-	self.lessThanLimit 		= ko.computed(function () {
+	self.lessThanLimit 						= ko.computed(function () {
 		return (self.interests().length < maxInterests);
 	}, self)
 }
@@ -88,21 +101,21 @@ var Meetup = function(input) {
 	if (typeof(input) === 'undefined') {
 		input = { name: defaultMeetupName, date: Date.now }; 
 	}
-	self.name 				= ko.observable(input.name).extend({ 
+	self.name 										= ko.observable(input.name).extend({ 
 		required: true
 		, minLength: 3
 	});
-	self.date 				= ko.observable(input.date);
-	self.people 			= ko.observableArray([]);
+	self.date 										= ko.observable(input.date);
+	self.people 									= ko.observableArray([]);
 	for (var i in input.people) { self.people.push( new Person(input.people[i]) ) }
-	self.addPerson 			= function() { self.people.push( new Person() ) }
-	self.removePerson 		= function(item) { self.people.remove(item) }
+	self.addPerson 								= function() { self.people.push( new Person() ) }
+	self.removePerson 						= function(item) { self.people.remove(item) }
 
-	self.lessThanLimit 		= ko.computed(function () {
+	self.lessThanLimit 						= ko.computed(function () {
 		return (self.people().length < maxParticipants);
 	}, self)
 
-	self.formattedDate 		= ko.computed(function() {
+	self.formattedDate 						= ko.computed(function() {
 		var date =  new Date(self.date());
 		// return date.toDateString('yyyy-MM-dd'); // @todo: fix this
 		return date.toDateString();
@@ -112,11 +125,11 @@ var Meetup = function(input) {
 var ViewModel = function() {
 	var self = this;
 	// meetups
-	self.meetups = ko.observableArray([]);
+	self.meetups 									= ko.observableArray([]);
 	// holds the new meetup
-	self.newMeetup = ko.observableArray( [new Meetup()] );
+	self.newMeetup 								= ko.observableArray( [new Meetup()] );
 
-	self.myErrors = ko.observableArray ([]);
+	self.myErrors 								= ko.observableArray ([]);
 
 	/* load entries from db */
 	/* maps the received data into our objects and then assigns the result to the model */
@@ -130,6 +143,7 @@ var ViewModel = function() {
 	/* delete all entries from db, then update the interface */
 	self.deleteAll = function() {
 		$.getJSON("/deleteAll", function(data) {
+			socket.send('saved!');
 			self.load();
 			show_stack_bar_top('success', 'All entries deleted', '', 1);
 		}); 
@@ -138,7 +152,7 @@ var ViewModel = function() {
 	/* save to db, remember to use ko.toJSON */
 	self.save = function() {
 
-		var result = ko.validation.group(self, {deep: true});
+		var result 									= ko.validation.group(self, {deep: true});
 		self.myErrors(result() );
 		// model.errors.showAllMessages();
 
@@ -169,6 +183,7 @@ var ViewModel = function() {
 		if (msg.result) {
 			self.load();
 			show_stack_bar_top('success', 'Meetup created', '', 1);
+			socket.send('saved!');
 		} else {
 			console.log('ERROR: ' + msg.message);
 			var errorMessages = [];
@@ -206,20 +221,9 @@ var ViewModel = function() {
 }
 
 
-function loadSocket() {
-  var socket = io.connect('http://scanwise.cl:3000');
-  socket.on('updated', function (data) {
-    console.log('websockets funcinando!')
-    console.log(data);
-    model.load();
-
-    // model.load();
-    // socket.emit('my other event', { my: 'data' });
-  });
-}
-
-
 $(document).ready(function () {
+
+	socket = io.connect('http://scanwise.cl:3000');
 
 	// new instance (only necessary to invoke the load method afterwards)
 	model = new ViewModel();

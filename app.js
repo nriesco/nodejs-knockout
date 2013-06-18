@@ -45,15 +45,12 @@ http.createServer(app).listen(app.get('port'), function(){
 
   var io = require('socket.io').listen(this);
   io.sockets.on('connection', function (socket) {
-    socket.broadcast.emit('updated', true);
+    socket.on('message', function(msg) {
+      socket.broadcast.emit('needsToBeUpdated', true);
+    });
+    socket.on('meetupSaved', function(msg) {
+      console.log('a custom event!');
+    });
   });
 
-  // io.sockets.on('disconnect', function (socket) {
-  //   socket.broadcast.emit('updated', false);
-  // });
-
-  // io.sockets.on('message', function (socket) {
-  //   console.log('message');
-  //   socket.broadcast.emit('updated', true);
-  // });
 });
