@@ -18,6 +18,7 @@
 
 
 <link rel="stylesheet" href="/stylesheets/knockout.css" />
+<script src="/socket.io/socket.io.js"></script>
 
 <script type='text/javascript'>
 /*<![CDATA[*/
@@ -204,6 +205,20 @@ var ViewModel = function() {
 	);
 }
 
+
+function loadSocket() {
+  var socket = io.connect('http://scanwise.cl:3000');
+  socket.on('updated', function (data) {
+    console.log('websockets funcinando!')
+    console.log(data);
+    model.load();
+
+    // model.load();
+    // socket.emit('my other event', { my: 'data' });
+  });
+}
+
+
 $(document).ready(function () {
 
 	// new instance (only necessary to invoke the load method afterwards)
@@ -212,8 +227,12 @@ $(document).ready(function () {
 	ko.applyBindings(model); // This makes Knockout get to work
 	// load and set an interterval to re-load
 	model.load();
-	setInterval(model.load, 1000 * reloadIntervalInSeconds);
 
+	// reload disabled -> replaced by websockets
+	// setInterval(model.load, 1000 * reloadIntervalInSeconds);
+	loadSocket();
+
+	// this custom validation rule was not working properly
 	// custom validation rules
 	// ko.validation.rules['myRule'] = {
 

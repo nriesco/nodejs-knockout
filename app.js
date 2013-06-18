@@ -4,8 +4,8 @@
  */
 
 var express = require('express')
-  , examples = require('./controllers/examples')
-  , meetup = require('./controllers/meetup')
+  , examples = require('./routes/examples')
+  , meetup = require('./routes/meetup')
   , http = require('http')
   , path = require('path');
 
@@ -42,4 +42,18 @@ app.get('/deleteAll', meetup.deleteAll);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
+
+  var io = require('socket.io').listen(this);
+  io.sockets.on('connection', function (socket) {
+    socket.broadcast.emit('updated', true);
+  });
+
+  // io.sockets.on('disconnect', function (socket) {
+  //   socket.broadcast.emit('updated', false);
+  // });
+
+  // io.sockets.on('message', function (socket) {
+  //   console.log('message');
+  //   socket.broadcast.emit('updated', true);
+  // });
 });
