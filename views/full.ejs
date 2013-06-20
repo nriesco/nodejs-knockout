@@ -41,7 +41,6 @@ var reloadIntervalInSeconds 		= 5; // you may wan't to reduce this value for pro
 var maxParticipants 						= 30;
 var maxInterests 								= 4;
 
-
 /**
 * this will reload the content when the ws receives a needsToBeUpdated event
 */
@@ -223,7 +222,12 @@ var ViewModel = function() {
 
 $(document).ready(function () {
 
-	socket = io.connect('http://scanwise.cl:3000');
+	console.log(location);
+
+
+	// socket = io.connect('http://' + host);
+	socket = io.connect('http://' + location.hostname + ':' + location.port);
+	// socket = io.connect('http://' + location.hostname + ':3000');
 
 	// new instance (only necessary to invoke the load method afterwards)
 	model = new ViewModel();
