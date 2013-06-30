@@ -1,11 +1,15 @@
-
 Combining Knockout and Node, using Expressjs and MongoDB
 --------
 
 Configuring your project:
 
+Only needed if you start from scratch:
 ````
 express --sessions --css less --ejs nodejs-knockout
+````
+
+Required:
+````
 cd nodejs-knockout
 sudo npm install
 ````
